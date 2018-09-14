@@ -2,6 +2,28 @@
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+- name: disable SELinux
+  command: setenforce 0
+  
+- name: disable SELinux on reboot
+  selinux:
+    state: disabled
+
+- name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+
+- name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present   
+   
+- name: Disable Kernal netfiler
+  command: modprobe br_netfilter
+
 - include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
 
